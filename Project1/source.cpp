@@ -37,6 +37,12 @@ int main() {
     cout << "введите количество игроков" << endl;
     cin >> playercount;
 
+    int* dayp = new int[playercount];
+    for (int i = 0; i < playercount; i++) {
+        dayp[i] = day;
+        cout << dayp[i] << endl;
+    }
+
 
     int* m1 = new int[playercount];
     for (int i = 0; i < playercount; ++i) {
@@ -57,6 +63,12 @@ int main() {
         cout << l1[i] << endl;
     }
 
+    double* bp1 = new double[playercount];
+    for (int i = 0; i < playercount; i++) {
+        bp1[i] = round(bp_dis(gen) * 100) / 100;
+        cout << bp1[i];
+    }
+
     double robincrease = 0.5 / (1 + pow(e, -((m / 200) * (bp / 200))));
 
     double* robChance1 = new double[playercount];
@@ -69,55 +81,54 @@ int main() {
         maxrobChance1[i] = 0;
     }
     
+    for (int i = 0; i < playercount; i++) {
+        while (m > 0) {
+            cout << fixed << setprecision(2);
+            cout << "Доброе утро сэр. Сегодня ваш " << dayp[i]
+                << " день в торговле бананами. У вас " << m1[i]
+                << " денег и " << b1[i] << " бананов. Цены на бирже бананов сегодня "
+                << bp << " Цена за аренду сегодня: " << l << ".\n";
 
-    while (m > 0) {
-        cout << fixed << setprecision(2);
-        cout << "Доброе утро сэр. Сегодня ваш " << day
-            << " день в торговле бананами. У вас " << m
-            << " денег и " << b << " бананов. Цены на бирже бананов сегодня "
-            << bp << " Цена за аренду сегодня: " << l << ".\n";
+            cout << "Выберите что мы сегодня будем делать: Продавать бананы(1), Покупать бананы(2), Ничего не делать(3): ";
+            string choise = 0;
+            cin >> choise;
 
-        cout << "Выберите что мы сегодня будем делать: Продавать бананы(1), Покупать бананы(2), Ничего не делать(3): ";
-        string choise;
-        cin >> choise;
+            if (choise == "1") {
+                cout << "Продавать бананы\n";
+                cout << "Сэр сколько бананов вы хотите продать? ";
+                cin >> choiseB;
 
-        if (choise == "1") {
-            cout << "Продавать бананы\n";
-            cout << "Сэр сколько бананов вы хотите продать? ";
-            cin >> choiseB;
+                if (choiseB > b) {
+                    cout << "Сэр мне придется выпотрошить вас :(((\n";
+                    break;
+                }
+                m = m - l + bp * choiseB;
+                b -= choiseB;
+            }
+            else if (choise == "2") {
+                cout << "Покупать бананы\n";
+                cout << "Сэр сколько бананов вы хотите купить? ";
+                cin >> choiseM;
 
-            if (choiseB > b) {
+                if (choiseM > m) {
+                    cout << "Сэр мне придется выпотрошить вас :(((\n";
+                    break;
+                }
+                b += choiseM;
+                m = m - l - bp * choiseM;
+            }
+            else if (choise == "3") {
+                cout << "Ничего не делать\n";
+                cout << "Cэр можете отправиться в джакузи 3 раз за день до следующего дня\n";
+                m -= l;
+            }
+            else {
                 cout << "Сэр мне придется выпотрошить вас :(((\n";
                 break;
             }
-            m = m - l + bp * choiseB;
-            b -= choiseB;
-        }
-        else if (choise == "2") {
-            cout << "Покупать бананы\n";
-            cout << "Сэр сколько бананов вы хотите купить? ";
-            cin >> choiseM;
+    }
 
-            if (choiseM > m) {
-                cout << "Сэр мне придется выпотрошить вас :(((\n";
-                break;
-            }
-            b += choiseM;
-            m = m - l - bp * choiseM;
-        }
-        else if (choise == "3") {
-            cout << "Ничего не делать\n";
-            cout << "Cэр можете отправиться в джакузи 3 раз за день до следующего дня\n";
-            m -= l;
-        }
-        else {
-            cout << "Сэр мне придется выпотрошить вас :(((\n";
-            break;
-        }
-
-        // Обновление экономики
-        maxBananaCost += 0.013;
-        minBananaCost += 0.0131;
+    
 
         // Расчет шанса ограбления
         maxrobChance += 100 + dis(gen) * 0.033 - 0.015;
@@ -144,6 +155,10 @@ int main() {
             cout << bLoos << " ВАШИХ БАНАНОВ СГНИЛО!!!\n";
             rotChance /= 2;
         }
+        
+        // Обновление экономики
+        maxBananaCost += 0.013;
+        minBananaCost += 0.0131;
 
         // Обновление цен
         uniform_real_distribution<> new_bp_dis(minBananaCost + 0.01, maxBananaCost);
@@ -154,7 +169,6 @@ int main() {
         l = round(new_l_dis(gen) * 10) / 10;
 
         day++;
-    }
 
     return 0;
 }
